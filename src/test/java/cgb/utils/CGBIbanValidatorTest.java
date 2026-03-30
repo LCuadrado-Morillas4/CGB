@@ -14,7 +14,7 @@ public class CGBIbanValidatorTest {
 	@BeforeAll
 	public static void oneTimeSetUp() {
 		System.out.println("BeforeAll - CGBIbanValidatorTest");
-		ibanValidator = CGBIbanValidator.getInstance();
+		ibanValidator = CGBIbanValidator.getInstanceValidator();
 	}
 	
 	@Test

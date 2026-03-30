@@ -2,7 +2,6 @@ package cgb.utils;
 
 import org.apache.commons.validator.routines.IBANValidator;
 
-import cgb.transfer.exception.InvalidIbanException;
 import cgb.transfer.exception.InvalidIbanFormatException;
 import cgb.transfer.exception.InvalidUnCheckableIbanException;
 
@@ -12,13 +11,6 @@ public class CGBIbanValidator {
 
 	private CGBIbanValidator() {
 
-	}
-
-	public static CGBIbanValidator getInstance() {
-		if (instance == null) {
-			return new CGBIbanValidator();
-		}
-		return instance;
 	}
 
 	/**

@@ -22,18 +22,7 @@ public class CGBIbanValidator {
 	}
 	
 	public boolean isIbanStructureValid(String iban) throws InvalidIbanFormatException {
-		for (int i = 0; i < iban.length(); i++) {
-			if (i <= 1) {
-				if (!Character.isLetter(iban.charAt(i))) {throw new InvalidIbanFormatException();}
-			}
-			else if (i <= 3) {
-				if (!Character.isDigit(iban.charAt(i))) {throw new InvalidIbanFormatException();}
-			}
-			else {
-				if (!Character.isDigit(iban.charAt(i))) {throw new InvalidIbanFormatException();}
-			}
-		}
-		return true;
+		return iban.matches("FR{2}[0-9]{25}");
 	}
 	
 	public boolean isIbanValid(String iban) {

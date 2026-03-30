@@ -94,5 +94,65 @@ public class DatabaseInitializer {
         account8.setAccountNumber("891234568");
         account8.setSolde(1000.00);
         accountRepository.save(account8);
+        
+        Account account9 = new Account();
+        account9.setAccountNumber("912345678");
+        account9.setSolde(1400.00);
+        accountRepository.save(account9);
+        
+        Account account10 = new Account();
+        account10.setAccountNumber("122333444");
+        account10.setSolde(1700.00);
+        accountRepository.save(account10);
+        
+        Account account11 = new Account();
+        account11.setAccountNumber("444333221");
+        account11.setSolde(200.00);
+        accountRepository.save(account11);
+        
+        Account account12 = new Account();
+        account12.setAccountNumber("192837645");
+        account12.setSolde(290.00);
+        accountRepository.save(account12);
+        
+        Account account13 = new Account();
+        account13.setAccountNumber("918273465");
+        account13.setSolde(2900.00);
+        accountRepository.save(account13);
+        
+        Account account14 = new Account();
+        account14.setAccountNumber("172839456");
+        account14.setSolde(600.00);
+        accountRepository.save(account14);
+        
+        Account account15 = new Account();
+        account15.setAccountNumber("938271645");
+        account15.setSolde(680.00);
+        accountRepository.save(account15);
+        
+        Account account16 = new Account();
+        account16.setAccountNumber("134679285");
+        account16.setSolde(1100.00);
+        accountRepository.save(account16);
+        
+        Account account17 = new Account();
+        account17.setAccountNumber("486257391");
+        account17.setSolde(900.00);
+        accountRepository.save(account17);
+        
+        Account account18 = new Account();
+        account18.setAccountNumber("938274615");
+        account18.setSolde(1750.00);
+        accountRepository.save(account18);
+        
+        Account account19 = new Account();
+        account19.setAccountNumber("428617539");
+        account19.setSolde(1500.00);
+        accountRepository.save(account19);
+        
+        Account account20 = new Account();
+        account20.setAccountNumber("845697123");
+        account20.setSolde(2300.00);
+        accountRepository.save(account20);
     }
 }

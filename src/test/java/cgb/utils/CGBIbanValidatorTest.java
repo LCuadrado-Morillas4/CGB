@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.*;
 
 import cgb.transfer.exception.InvalidIbanFormatException;
+import cgb.transfer.exception.InvalidUnCheckableIbanException;
 
 public class CGBIbanValidatorTest {
 	
@@ -25,17 +26,17 @@ public class CGBIbanValidatorTest {
 	@Test
 	public void testIsIbanStructureValid() throws InvalidIbanFormatException {
 		assertTrue(ibanValidator.isIbanStructureValid("FR2341201815585586861823448"));
-		assertFalse(ibanValidator.isIbanStructureValid("FR"));
-		assertFalse(ibanValidator.isIbanStructureValid("2341201815585586861823448"));
-		assertFalse(ibanValidator.isIbanStructureValid("LBJ23"));		
+		assertThrows(InvalidIbanFormatException.class, () -> ibanValidator.isIbanStructureValid("FR"));
+		assertThrows(InvalidIbanFormatException.class, () -> ibanValidator.isIbanStructureValid("2341201815585586861823448"));
+		assertThrows(InvalidIbanFormatException.class, () -> ibanValidator.isIbanStructureValid("LBJ23"));
 	}
 	
 	@Test
-	public void testIsIbanValid() {
+	public void testIsIbanValid() throws InvalidUnCheckableIbanException {
 		assertTrue(ibanValidator.isIbanValid("FR2341201815585586861823448"));
-		assertFalse(ibanValidator.isIbanValid("FR"));
-		assertFalse(ibanValidator.isIbanValid("2341201815585586861823448"));
-		assertFalse(ibanValidator.isIbanValid("LBJ23"));	
+		assertThrows(InvalidUnCheckableIbanException.class, () -> ibanValidator.isIbanValid("FR"));
+		assertThrows(InvalidUnCheckableIbanException.class, () -> ibanValidator.isIbanValid("2341201815585586861823448"));
+		assertThrows(InvalidUnCheckableIbanException.class, () -> ibanValidator.isIbanValid("LBJ23"));
 	}
 	
 	@Test

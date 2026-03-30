@@ -58,22 +58,21 @@ public class TransferService {
         /*Pas de découvert autorisé*/
         if (sourceAccount.getSolde().compareTo(amount) < 0) {
             throw new RuntimeException("Insufficient funds");
-        }else {
-
-        sourceAccount.setSolde(sourceAccount.getSolde()-(amount)); 
-        destinationAccount.setSolde(destinationAccount.getSolde()+(amount));
-
-        accountRepository.save(sourceAccount);
-        accountRepository.save(destinationAccount);
-
-        Transfer transfer = new Transfer();
-        transfer.setSourceAccountNumber(sourceAccountNumber);
-        transfer.setDestinationAccountNumber(destinationAccountNumber);
-        transfer.setAmount(amount);
-        transfer.setTransferDate(transferDate);
-        transfer.setDescription(description);
-
-        return transferRepository.save(transfer);
+        } else {
+		    sourceAccount.setSolde(sourceAccount.getSolde()-(amount)); 
+		    destinationAccount.setSolde(destinationAccount.getSolde()+(amount));
+		
+		    accountRepository.save(sourceAccount);
+		    accountRepository.save(destinationAccount);
+		
+		    Transfer transfer = new Transfer();
+		    transfer.setSourceAccountNumber(sourceAccountNumber);
+		    transfer.setDestinationAccountNumber(destinationAccountNumber);
+		    transfer.setAmount(amount);
+		    transfer.setTransferDate(transferDate);
+		    transfer.setDescription(description);
+		
+		    return transferRepository.save(transfer);
         }
         
     }
@@ -89,9 +88,7 @@ public class TransferService {
     public Transfer deleteTransfer(Long id) throws DeleteTransferException {
     	Optional<Transfer> otranfer=transferRepository.findById(id);
     	transferRepository.deleteById(id);
-    	if (otranfer.isEmpty())throw new DeleteTransferException(FailureTransfert.OBJECT_NOT_FOUND); 
+    	if (otranfer.isEmpty()) throw new DeleteTransferException(FailureTransfert.OBJECT_NOT_FOUND); 
     	return otranfer.orElse(null);
     }
 }
-
-

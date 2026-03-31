@@ -3,6 +3,8 @@ package cgb.transfer.entity;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 
 /**
  * Classe permettant le mapping d'un tranfert entre la DB et l'API.
@@ -41,6 +43,13 @@ public class Transfer {
      * La description qui est associée au tranfert.
      */
     private String description;
+    /**
+     * Identifiant du lot
+     */
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "batch_id")
+    @JsonBackReference
+    private BatchTransfer batch_id;
 
     // Getters and Setters with lombok
     

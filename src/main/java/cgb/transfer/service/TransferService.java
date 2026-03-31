@@ -26,7 +26,7 @@ public class TransferService {
 	 * Rappel du cours sur les transactions... Tout ou rien
 	 */
 	@Transactional
-	public Transfer createTransfer(String sourceAccountNumber, String destinationAccountNumber, Double amount, LocalDate transferDate, String description) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException {
+	public Transfer createTransfer(String sourceAccountNumber, String destinationAccountNumber, Double amount, LocalDate transferDate, String description) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException {
 		Account sourceAccount = accountRepository.findById(sourceAccountNumber)
 				.orElseThrow(() -> new InvalidAccountException("Source"));
 		Account destinationAccount = accountRepository.findById(destinationAccountNumber)
@@ -34,7 +34,7 @@ public class TransferService {
 		if (amount < 0) {
 			throw new NegativeTransferAmountException();
 		} else if (sourceAccount.getSolde().compareTo(amount) < 0) {
-			throw new RuntimeException("Insufficient funds");
+			throw new InsufficientFundsException();
 		} else if (transferDate.isBefore(LocalDate.now())) {
 			throw new DateTransferException();
 		} else {

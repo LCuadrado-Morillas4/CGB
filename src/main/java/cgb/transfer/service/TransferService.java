@@ -13,6 +13,9 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Optional;
 
+/**
+ * La classe de Service permettant le lien entre Repository et Controller.
+ */
 @Service
 public class TransferService {
 

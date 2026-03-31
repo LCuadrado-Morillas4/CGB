@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -21,12 +22,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cgb.transfer.controller.TransferRestController;
 import cgb.transfer.entity.Transfer;
 
 
 @SpringBootTest
 @AutoConfigureMockMvc
-//@WebMvcTest(TransferController.class)
+//@WebMvcTest(TransferRestController.class)
 @WithMockUser(username = "user")
 public class TransferControllerTest {
 
@@ -62,7 +64,7 @@ public class TransferControllerTest {
 	
 	@Test
 	public void deleteTransferTest_Success() throws Exception {
-	    Long id = 7L;
+	    Long id = 1L;
 	    mockMvc.perform(delete("/api/transfers")
 	            .contentType(MediaType.APPLICATION_JSON)
 	            .content(String.valueOf(id)))

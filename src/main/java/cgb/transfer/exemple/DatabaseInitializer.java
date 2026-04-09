@@ -69,7 +69,7 @@ public class DatabaseInitializer {
         accountRepository.save(account1);
 
         Account account2 = new Account();
-        account1.setAccountNumber(IbanGenerator.generateValidIban());
+        account2.setAccountNumber(IbanGenerator.generateValidIban());
         account2.setSolde(500.00);
         accountRepository.save(account2);
 

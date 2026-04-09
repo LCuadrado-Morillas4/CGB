@@ -2,8 +2,6 @@ package cgb.transfer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +9,6 @@ import cgb.transfer.dto.TransferRequest;
 import cgb.transfer.entity.Transfer;
 import cgb.transfer.service.TransferService;
 import cgb.transfer.exception.*;
-
-import java.time.LocalDate;
-import java.util.Optional;
 
 /**
  * Classe de gestion de la route pour la gestion des transferts.

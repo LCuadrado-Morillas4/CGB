@@ -5,18 +5,15 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import cgb.transfer.dto.TransferRequest;
-import cgb.transfer.entity.Account;
 import cgb.transfer.entity.BatchTransfer;
+import cgb.transfer.entity.State;
 import cgb.transfer.entity.Transfer;
 import cgb.transfer.exception.*;
-import cgb.transfer.exception.DeleteTransferException.FailureTransfert;
 import cgb.transfer.repository.AccountRepository;
 import cgb.transfer.repository.BatchTransferRepository;
 import cgb.transfer.repository.TransferRepository;
-import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * La classe de Service permettant le lien entre Repository et Controller.
@@ -33,28 +30,33 @@ public class BatchTransferService {
 	@Autowired
 	private TransferRepository transferRepository;
 	
+	@Autowired
+	private TransferService transferService;
+	
 	@Async
-	public BatchTransfer createBatchTransfer(String refLot, String sourceAccountNumber, String description, List<TransferRequest> listTransfers) throws InvalidAccountException {
-		if (!accountRepository.findById(sourceAccountNumber).isPresent()) {
-			throw new InvalidAccountException("Source");
-		}
-
+	public BatchTransfer createBatchTransfer(String refLot, String sourceAccountNumber, String description, List<TransferRequest> listTransfers) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException {
 		BatchTransfer batch = new BatchTransfer();
 		batch.setRefLot(refLot);
 		batch.setSourceAccountNumber(sourceAccountNumber);
 		batch.setDescription(description);
 		batch.setDate(LocalDate.now());
+		batch.setState(State.RECEIVED.getNom());
+		
+		if (!accountRepository.findById(sourceAccountNumber).isPresent()) {
+			throw new InvalidAccountException("Source");
+		}
 		
 		for (TransferRequest transferRequest: listTransfers) {
-			Transfer transfer = new Transfer();
-			transfer.setSourceAccountNumber(sourceAccountNumber);
-			transfer.setDestinationAccountNumber(transferRequest.getDestinationAccountNumber());
-			transfer.setAmount(transferRequest.getAmount());
-			transfer.setTransferDate(LocalDate.now());
-			transfer.setDescription(transferRequest.getDescription());
-			batch.addTransfer(transfer);
+			Transfer transfer = transferService.createTransfer(sourceAccountNumber,
+					transferRequest.getDestinationAccountNumber(),
+					transferRequest.getAmount(),
+					LocalDate.now(),
+					description);
+			transfer.setBatch_id(batch);
 			transferRepository.save(transfer);
 		}
+		
+		batch.setState(State.CLOSED.getNom());
 		
 		return batchTransferRepository.save(batch);
 	}

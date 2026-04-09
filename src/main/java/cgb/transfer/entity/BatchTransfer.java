@@ -2,12 +2,13 @@ package cgb.transfer.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
- * Classe permettant le mapping d'un tranfert entre la DB et l'API.
+ * Classe permettant le mapping d'un tranfert par lot entre la BDD et l'API.
  */
 @Entity
 public class BatchTransfer {
@@ -28,7 +29,7 @@ public class BatchTransfer {
 	
 	@OneToMany(mappedBy = "batch_id", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference
-	private List<Transfer> listTransfers;
+	private List<Transfer> listTransfers = new ArrayList<Transfer>();;
 
 	//Getters & Setters
 	public Long getId() {

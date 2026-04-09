@@ -27,7 +27,7 @@ public class BatchTransferRequest {
     /**
      * Liste des transferts du lot
      */
-    private List<Transfer> listTransfers;
+    private List<TransferRequest> listTransfers;
     
     public String getRefLot() {
     	return refLot;
@@ -47,10 +47,10 @@ public class BatchTransferRequest {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public List<Transfer> getListTransfers() {
+	public List<TransferRequest> getListTransfers() {
 		return listTransfers;
 	}
-	public void setListTransfer(List<Transfer> listTransfers) {
+	public void setListTransfer(List<TransferRequest> listTransfers) {
 		this.listTransfers = listTransfers;
 	}
 

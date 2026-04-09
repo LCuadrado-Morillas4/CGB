@@ -33,7 +33,7 @@ public class BatchTransferRestController {
 	 * @return  L'objet JSON correspondant au transfer s'il est valide.
 	 * 			Une réponse 'BAD_REQUEST' si une RuntimeException est rencontrée.
 	 */
-	public ResponseEntity<?> createTransfer(@RequestBody BatchTransferRequest batchTransferRequest) throws InvalidAccountException {
+	public ResponseEntity<?> createTransfer(@RequestBody BatchTransferRequest batchTransferRequest) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException {
 		try {
 			BatchTransfer batch = batchTransferService.createBatchTransfer(
 					batchTransferRequest.getRefLot(),

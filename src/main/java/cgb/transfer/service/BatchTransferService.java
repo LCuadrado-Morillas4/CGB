@@ -12,6 +12,8 @@ import cgb.transfer.exception.*;
 import cgb.transfer.repository.AccountRepository;
 import cgb.transfer.repository.BatchTransferRepository;
 import cgb.transfer.repository.TransferRepository;
+import jakarta.transaction.Transactional;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -34,6 +36,7 @@ public class BatchTransferService {
 	private TransferService transferService;
 	
 	@Async
+	@Transactional
 	public BatchTransfer createBatchTransfer(String refLot, String sourceAccountNumber, String description, List<TransferRequest> listTransfers) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException {
 		BatchTransfer batch = new BatchTransfer();
 		batch.setRefLot(refLot);
@@ -41,6 +44,7 @@ public class BatchTransferService {
 		batch.setDescription(description);
 		batch.setDate(LocalDate.now());
 		batch.setState(State.RECEIVED.getNom());
+		batchTransferRepository.save(batch);
 		
 		if (!accountRepository.findById(sourceAccountNumber).isPresent()) {
 			throw new InvalidAccountException("Source");
@@ -53,7 +57,9 @@ public class BatchTransferService {
 					LocalDate.now(),
 					description);
 			transfer.setBatch_id(batch);
+			batch.addTransfer(transfer);
 			transferRepository.save(transfer);
+			batchTransferRepository.save(batch);
 		}
 		
 		batch.setState(State.CLOSED.getNom());

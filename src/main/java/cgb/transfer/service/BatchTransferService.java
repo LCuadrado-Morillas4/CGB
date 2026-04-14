@@ -37,9 +37,9 @@ public class BatchTransferService {
 	
 	@Async
 	@Transactional
-	public BatchTransfer createBatchTransfer(String refLot, String sourceAccountNumber, String description, List<TransferRequest> listTransfers) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException {
+	public void createBatchTransfer(String sourceAccountNumber, String description, List<TransferRequest> listTransfers) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException {
 		BatchTransfer batch = new BatchTransfer();
-		batch.setRefLot(refLot);
+		batch.setRefLot(generateRefLot());
 		batch.setSourceAccountNumber(sourceAccountNumber);
 		batch.setDescription(description);
 		batch.setDate(LocalDate.now());
@@ -64,7 +64,15 @@ public class BatchTransferService {
 		
 		batch.setState(State.CLOSED.getNom());
 		
-		return batchTransferRepository.save(batch);
+		batchTransferRepository.save(batch);
+	}
+	
+	private int countBatchTransfers(LocalDate date) {
+		return batchTransferRepository.countBatchTransfers(date);
+	}
+	
+	public String generateRefLot() {
+		return LocalDate.now().toString() + "-" + (countBatchTransfers(LocalDate.now()) + 1);
 	}
 
 }

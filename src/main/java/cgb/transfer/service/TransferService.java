@@ -26,13 +26,50 @@ public class TransferService {
 	@Autowired
 	private TransferRepository transferRepository;
 
-	/*
-	 * Rappel du cours sur les transactions... Tout ou rien
-	 */
 	@Transactional
 	public Transfer createTransfer(String sourceAccountNumber, String destinationAccountNumber, Double amount,
-			LocalDate transferDate, String description) throws InvalidAccountException, NegativeTransferAmountException,
-			DateTransferException, InsufficientFundsException {
+			LocalDate transferDate, String description) throws DateTransferException, NegativeTransferAmountException,
+			InvalidAccountException, InsufficientFundsException {
+
+		Transfer transfer = new Transfer();
+		transfer.setSourceAccountNumber(sourceAccountNumber);
+		transfer.setDestinationAccountNumber(destinationAccountNumber);
+		transfer.setAmount(amount);
+		transfer.setTransferDate(transferDate);
+		transfer.setDescription(description);
+
+		Optional<Account> sourceAccount = accountRepository.findById(sourceAccountNumber);
+		Optional<Account> destinationAccount = accountRepository.findById(destinationAccountNumber);
+
+		if (!sourceAccount.isPresent()) {
+			throw new InvalidAccountException("Source");
+		}
+
+		if (!destinationAccount.isPresent()) {
+			throw new InvalidAccountException("Destination");
+		}
+
+		if (transferDate.isBefore(LocalDate.now())) {
+			throw new DateTransferException();
+		} else if (amount <= 0) {
+			throw new NegativeTransferAmountException();
+		} else if (sourceAccount.get().getSolde().compareTo(amount) < 0) {
+			throw new InsufficientFundsException();
+		} else {
+			sourceAccount.get().setSolde(sourceAccount.get().getSolde() - (amount));
+			destinationAccount.get().setSolde(destinationAccount.get().getSolde() + (amount));
+
+			accountRepository.save(sourceAccount.get());
+			accountRepository.save(destinationAccount.get());
+
+			return transferRepository.save(transfer);
+		}
+
+	}
+
+	@Transactional
+	public Transfer createTransferForBatch(String sourceAccountNumber, String destinationAccountNumber, Double amount,
+			LocalDate transferDate, String description){
 		Transfer transfer = new Transfer();
 		transfer.setSourceAccountNumber(sourceAccountNumber);
 		transfer.setDestinationAccountNumber(destinationAccountNumber);
@@ -44,32 +81,27 @@ public class TransferService {
 
 		Optional<Account> sourceAccount = accountRepository.findById(sourceAccountNumber);
 
-		if (sourceAccount == null) {
+		if (!sourceAccount.isPresent()) {
 			transfer.setState(State.FAILURE.getNom());
-			transferRepository.save(transfer);
-			throw new InvalidAccountException("Source");
+			return transferRepository.save(transfer);
 		}
 
 		Optional<Account> destinationAccount = accountRepository.findById(destinationAccountNumber);
 
-		if (destinationAccount == null) {
+		if (!destinationAccount.isPresent()) {
 			transfer.setState(State.FAILURE.getNom());
-			transferRepository.save(transfer);
-			throw new InvalidAccountException("Destination");
+			return transferRepository.save(transfer);
 		}
 
 		if (amount < 0) {
 			transfer.setState(State.FAILURE.getNom());
-			transferRepository.save(transfer);
-			throw new NegativeTransferAmountException();
+			return transferRepository.save(transfer);
 		} else if (transferDate.isBefore(LocalDate.now())) {
 			transfer.setState(State.FAILURE.getNom());
-			transferRepository.save(transfer);
-			throw new DateTransferException();
+			return transferRepository.save(transfer);
 		} else if (sourceAccount.get().getSolde().compareTo(amount) < 0) {
 			transfer.setState(State.CANCELLED.getNom());
-			transferRepository.save(transfer);
-			throw new InsufficientFundsException();
+			return transferRepository.save(transfer);
 		} else {
 			sourceAccount.get().setSolde(sourceAccount.get().getSolde() - (amount));
 			destinationAccount.get().setSolde(destinationAccount.get().getSolde() + (amount));

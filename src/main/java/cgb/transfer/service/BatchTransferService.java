@@ -51,7 +51,7 @@ public class BatchTransferService {
 		}
 		
 		for (TransferRequest transferRequest: listTransfers) {
-			Transfer transfer = transferService.createTransfer(sourceAccountNumber,
+			Transfer transfer = transferService.createTransferForBatch(sourceAccountNumber,
 					transferRequest.getDestinationAccountNumber(),
 					transferRequest.getAmount(),
 					LocalDate.now(),

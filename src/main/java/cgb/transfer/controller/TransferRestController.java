@@ -34,7 +34,7 @@ public class TransferRestController {
 	public ResponseEntity<?> createTransfer(@RequestBody TransferRequest transferRequest) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException {
 		//public ResponseEntity<Transfer> createTransfer(@RequestBody TransferRequest transferRequest) {
 		try {
-			Transfer transfer = transferService.createTransfer(
+			Transfer transfer = transferService.createTransferForBatch(
 					transferRequest.getSourceAccountNumber(),
 					transferRequest.getDestinationAccountNumber(),
 					transferRequest.getAmount(),

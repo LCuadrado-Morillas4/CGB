@@ -51,7 +51,7 @@ public class TransferRestControllerUnitTest {
 	
 	@Test
 	void testCreateTransfer() throws Exception {
-		when(transferService.createTransfer(
+		when(transferService.createTransferForBatch(
 				Mockito.any(String.class),
 				Mockito.any(String.class),
 				Mockito.any(Double.class),

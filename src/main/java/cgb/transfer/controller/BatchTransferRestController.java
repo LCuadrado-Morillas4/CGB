@@ -11,7 +11,6 @@ import cgb.transfer.entity.BatchTransfer;
 import cgb.transfer.service.BatchTransferService;
 import cgb.transfer.exception.*;
 
-
 /**
  * Classe de gestion de la route pour la gestion des transferts par lot.
  */

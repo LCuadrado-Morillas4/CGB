@@ -16,7 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import cgb.transfer.entity.Account;
 import cgb.transfer.entity.Transfer;
+import cgb.transfer.exception.DateTransferException;
 import cgb.transfer.exception.DeleteTransferException;
+import cgb.transfer.exception.InsufficientFundsException;
+import cgb.transfer.exception.InvalidAccountException;
+import cgb.transfer.exception.NegativeTransferAmountException;
 import cgb.transfer.repository.AccountRepository;
 import cgb.transfer.repository.TransferRepository;
 import cgb.transfer.service.TransferService;
@@ -55,7 +59,7 @@ public class TransferServiceUnitTest {
 	}
 	
 	@Test
-	void testCreateTransfer() {
+	void testCreateTransfer() throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException {
 		when(accountRepository.findById("123456789")).thenReturn(Optional.of(srcAccount));
 		when(accountRepository.findById("987654321")).thenReturn(Optional.of(destAccount));
 		

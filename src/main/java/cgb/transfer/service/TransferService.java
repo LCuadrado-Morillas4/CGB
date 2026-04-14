@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cgb.transfer.entity.Account;
+import cgb.transfer.entity.State;
 import cgb.transfer.entity.Transfer;
 import cgb.transfer.exception.*;
 import cgb.transfer.exception.DeleteTransferException.FailureTransfert;
@@ -29,30 +30,54 @@ public class TransferService {
 	 * Rappel du cours sur les transactions... Tout ou rien
 	 */
 	@Transactional
-	public Transfer createTransfer(String sourceAccountNumber, String destinationAccountNumber, Double amount, LocalDate transferDate, String description) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException {
-		Account sourceAccount = accountRepository.findById(sourceAccountNumber)
-				.orElseThrow(() -> new InvalidAccountException("Source"));
-		Account destinationAccount = accountRepository.findById(destinationAccountNumber)
-				.orElseThrow(() -> new InvalidAccountException("Destination"));
+	public Transfer createTransfer(String sourceAccountNumber, String destinationAccountNumber, Double amount,
+			LocalDate transferDate, String description) throws InvalidAccountException, NegativeTransferAmountException,
+			DateTransferException, InsufficientFundsException {
+		Transfer transfer = new Transfer();
+		transfer.setSourceAccountNumber(sourceAccountNumber);
+		transfer.setDestinationAccountNumber(destinationAccountNumber);
+		transfer.setAmount(amount);
+		transfer.setTransferDate(transferDate);
+		transfer.setDescription(description);
+		transfer.setState(State.WAITING.getNom());
+		transferRepository.save(transfer);
+
+		Optional<Account> sourceAccount = accountRepository.findById(sourceAccountNumber);
+
+		if (sourceAccount == null) {
+			transfer.setState(State.FAILURE.getNom());
+			transferRepository.save(transfer);
+			throw new InvalidAccountException("Source");
+		}
+
+		Optional<Account> destinationAccount = accountRepository.findById(destinationAccountNumber);
+
+		if (destinationAccount == null) {
+			transfer.setState(State.FAILURE.getNom());
+			transferRepository.save(transfer);
+			throw new InvalidAccountException("Destination");
+		}
+
 		if (amount < 0) {
+			transfer.setState(State.FAILURE.getNom());
+			transferRepository.save(transfer);
 			throw new NegativeTransferAmountException();
-		} else if (sourceAccount.getSolde().compareTo(amount) < 0) {
-			throw new InsufficientFundsException();
 		} else if (transferDate.isBefore(LocalDate.now())) {
+			transfer.setState(State.FAILURE.getNom());
+			transferRepository.save(transfer);
 			throw new DateTransferException();
+		} else if (sourceAccount.get().getSolde().compareTo(amount) < 0) {
+			transfer.setState(State.CANCELLED.getNom());
+			transferRepository.save(transfer);
+			throw new InsufficientFundsException();
 		} else {
-			sourceAccount.setSolde(sourceAccount.getSolde() - (amount));
-			destinationAccount.setSolde(destinationAccount.getSolde() + (amount));
+			sourceAccount.get().setSolde(sourceAccount.get().getSolde() - (amount));
+			destinationAccount.get().setSolde(destinationAccount.get().getSolde() + (amount));
 
-			accountRepository.save(sourceAccount);
-			accountRepository.save(destinationAccount);
+			accountRepository.save(sourceAccount.get());
+			accountRepository.save(destinationAccount.get());
 
-			Transfer transfer = new Transfer();
-			transfer.setSourceAccountNumber(sourceAccountNumber);
-			transfer.setDestinationAccountNumber(destinationAccountNumber);
-			transfer.setAmount(amount);
-			transfer.setTransferDate(transferDate);
-			transfer.setDescription(description);
+			transfer.setState(State.SUCCESS.getNom());
 
 			return transferRepository.save(transfer);
 		}

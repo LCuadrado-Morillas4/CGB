@@ -72,7 +72,6 @@ public class TransferRestController {
 		}        
 	}  
 
-
 	/*
     @PostMapping
     public ResponseEntity<String> testTransfer(@RequestBody String s) {

@@ -77,12 +77,14 @@ public class TransferService {
 		transfer.setTransferDate(transferDate);
 		transfer.setDescription(description);
 		transfer.setState(State.WAITING.getNom());
+		transfer.setReason("Transfer sent");
 		transferRepository.save(transfer);
 
 		Optional<Account> sourceAccount = accountRepository.findById(sourceAccountNumber);
 
 		if (!sourceAccount.isPresent()) {
 			transfer.setState(State.FAILURE.getNom());
+			transfer.setReason("Source account doesn't exist");
 			return transferRepository.save(transfer);
 		}
 
@@ -90,17 +92,21 @@ public class TransferService {
 
 		if (!destinationAccount.isPresent()) {
 			transfer.setState(State.FAILURE.getNom());
+			transfer.setReason("Destination account doesn't exist");
 			return transferRepository.save(transfer);
 		}
 
-		if (amount < 0) {
+		if (transferDate.isBefore(LocalDate.now())) {
 			transfer.setState(State.FAILURE.getNom());
+			transfer.setReason("Transfer date is prior to today");
 			return transferRepository.save(transfer);
-		} else if (transferDate.isBefore(LocalDate.now())) {
+		} else if (amount < 0) {
 			transfer.setState(State.FAILURE.getNom());
+			transfer.setReason("Transfer amount can't be negative");
 			return transferRepository.save(transfer);
 		} else if (sourceAccount.get().getSolde().compareTo(amount) < 0) {
 			transfer.setState(State.CANCELLED.getNom());
+			transfer.setReason("Insufficient funds for source account");
 			return transferRepository.save(transfer);
 		} else {
 			sourceAccount.get().setSolde(sourceAccount.get().getSolde() - (amount));
@@ -110,6 +116,7 @@ public class TransferService {
 			accountRepository.save(destinationAccount.get());
 
 			transfer.setState(State.SUCCESS.getNom());
+			transfer.setReason("Transfer succesfull");
 
 			return transferRepository.save(transfer);
 		}

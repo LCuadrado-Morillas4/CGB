@@ -50,6 +50,11 @@ public class Transfer {
     private String state;
     
     /**
+     * La raison liée à l'état du transfert
+     */
+    private String reason;
+
+	/**
      * Identifiant du lot
      */
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -113,6 +118,14 @@ public class Transfer {
 	
 	public void setState(String state){
 		this.state = state;
+	}
+    
+    public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 	
 	public BatchTransfer getBatch_id() {

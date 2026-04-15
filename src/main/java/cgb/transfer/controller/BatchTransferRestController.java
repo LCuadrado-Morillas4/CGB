@@ -57,5 +57,27 @@ public class BatchTransferRestController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 		}
 	}
+	
+	@DeleteMapping
+	/**
+	 * Fonction de suppression d'un transfert par lot dans la BDD.
+	 * 
+	 * @param id  L'identifiant unique du transfert par lot à supprimer, 
+	 * 			  renseigné dans le corps de la requête.
+	 * @return  L'objet supprimé si l'opération a réussi.
+	 * 			Une réponse 'BAD_REQUEST' si une RuntimeException 
+	 * 			ou une DeleteTransferException est rencontrée.
+	 */
+	public ResponseEntity<?> deleteBatchTransfer(@RequestBody Long id) {
+		try {
+			BatchTransfer batch = batchTransferService.deleteBatchTransfer(id);
+			System.out.println(batch);
+			TransferResponse succesResponse = new TransferResponse("SUCCESS", batch.toString());
+			return ResponseEntity.ok(succesResponse);
+		}catch (RuntimeException | DeleteTransferException e) {
+			TransferResponse errorResponse = new TransferResponse("FAILURE", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+		} 
+	}
 
 }

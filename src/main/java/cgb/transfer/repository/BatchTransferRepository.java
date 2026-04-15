@@ -16,6 +16,13 @@ import cgb.transfer.entity.BatchTransfer;
 @Repository
 public interface BatchTransferRepository extends JpaRepository<BatchTransfer, Long> {
 	
+	/**
+	 * Renvoie le nombre de lots effectués sur une date précise
+	 * 
+	 * @param date
+	 * 
+	 * @return int
+	 */
 	@Query("SELECT COUNT(id) FROM BatchTransfer WHERE date = :date")
 	public int countBatchTransfers(@Param("date") LocalDate date);
 	

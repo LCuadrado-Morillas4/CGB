@@ -13,18 +13,36 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Entity
 public class BatchTransfer {
 
+	/**
+	 * L'identifiant unique d'un lot
+	 */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	/**
+	 * Numéro unique du lot, composé de la date de création et du n° du lot
+	 */
 	private String refLot;
 	
+	/**
+	 * L'identifiant unique du compte dont le transfert provient
+	 */
 	private String sourceAccountNumber;
 	
+	/**
+	 * La description associée au lot
+	 */
 	private String description;
 	
+	/**
+	 * La date du lot
+	 */
 	private LocalDate date;
 	
+	/**
+	 * État du transfert
+	 */
 	private String state;
 	
 	@OneToMany(mappedBy = "batch_id", cascade = CascadeType.ALL, orphanRemoval = true)

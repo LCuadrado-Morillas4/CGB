@@ -13,8 +13,10 @@ import cgb.transfer.exception.DeleteTransferException.FailureTransfert;
 import cgb.transfer.repository.AccountRepository;
 import cgb.transfer.repository.BatchTransferRepository;
 import cgb.transfer.repository.TransferRepository;
+import cgb.utils.Logger;
 import jakarta.transaction.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -37,9 +39,11 @@ public class BatchTransferService {
 	@Autowired
 	private TransferService transferService;
 	
+	private Logger logger = Logger.getInstance();
+	
 	@Async
 	@Transactional
-	public void createBatchTransfer(String sourceAccountNumber, String description, List<TransferRequest> listTransfers) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException {
+	public void createBatchTransfer(String sourceAccountNumber, String description, List<TransferRequest> listTransfers) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException, IOException {
 		BatchTransfer batch = new BatchTransfer();
 		batch.setRefLot(generateRefLot());
 		batch.setSourceAccountNumber(sourceAccountNumber);
@@ -47,6 +51,7 @@ public class BatchTransferService {
 		batch.setDate(LocalDate.now());
 		batch.setState(State.RECEIVED.getNom());
 		batchTransferRepository.save(batch);
+		logger.log("Batch ref: " + batch.getRefLot() + " | Creating batch succeeded");
 		
 		if (!accountRepository.findById(sourceAccountNumber).isPresent()) {
 			throw new InvalidAccountException("Source");
@@ -60,11 +65,13 @@ public class BatchTransferService {
 					description);
 			transfer.setBatch_id(batch);
 			batch.addTransfer(transfer);
+			logger.log(formatTransfer(transfer));
 			transferRepository.save(transfer);
 			batchTransferRepository.save(batch);
 		}
 		
 		batch.setState(State.CLOSED.getNom());
+		logger.log("Batch completed\n==================================================================");
 		
 		batchTransferRepository.save(batch);
 	}
@@ -96,6 +103,20 @@ public class BatchTransferService {
 		if (oBatch.isEmpty())
 			throw new DeleteTransferException(FailureTransfert.OBJECT_NOT_FOUND);
 		return oBatch.orElse(null);
+	}
+	
+	public String formatTransfer(Transfer transfer) {
+		String message = "Transfer from " + transfer.getSourceAccountNumber() + " to "
+				+ transfer.getDestinationAccountNumber() 
+				+ " | Amount: " + transfer.getAmount() 
+				+ " | Date: " + transfer.getTransferDate() 
+				+ " | State: " + transfer.getState();
+
+		if (transfer.getReason() != null) {
+			message += " | Reason: " + transfer.getReason();
+		}
+		
+		return message;
 	}
 
 }

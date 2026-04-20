@@ -1,5 +1,6 @@
 package cgb.transfer.controller;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -37,7 +38,7 @@ public class BatchTransferRestController {
 	 */
 	public ResponseEntity<?> createTransfer(@RequestBody BatchTransferRequest batchTransferRequest)
 			throws InvalidAccountException, NegativeTransferAmountException, DateTransferException,
-			InsufficientFundsException {
+			InsufficientFundsException, IOException {
 		try {
 			String refLot = batchTransferService.generateRefLot();
 			

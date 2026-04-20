@@ -9,11 +9,17 @@ import cgb.transfer.entity.BatchTransfer;
 import cgb.transfer.entity.State;
 import cgb.transfer.entity.Transfer;
 import cgb.transfer.exception.*;
+import cgb.transfer.exception.DeleteTransferException.FailureTransfert;
 import cgb.transfer.repository.AccountRepository;
 import cgb.transfer.repository.BatchTransferRepository;
 import cgb.transfer.repository.TransferRepository;
+import cgb.utils.Logger;
+import jakarta.transaction.Transactional;
+
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * La classe de Service permettant le lien entre Repository et Controller.
@@ -33,32 +39,84 @@ public class BatchTransferService {
 	@Autowired
 	private TransferService transferService;
 	
+	private Logger logger = Logger.getInstance();
+	
 	@Async
-	public BatchTransfer createBatchTransfer(String refLot, String sourceAccountNumber, String description, List<TransferRequest> listTransfers) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException {
+	@Transactional
+	public void createBatchTransfer(String sourceAccountNumber, String description, List<TransferRequest> listTransfers) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException, IOException {
 		BatchTransfer batch = new BatchTransfer();
-		batch.setRefLot(refLot);
+		batch.setRefLot(generateRefLot());
 		batch.setSourceAccountNumber(sourceAccountNumber);
 		batch.setDescription(description);
 		batch.setDate(LocalDate.now());
 		batch.setState(State.RECEIVED.getNom());
+		batchTransferRepository.save(batch);
+		logger.log("Batch ref: " + batch.getRefLot() + " | Creating batch succeeded");
 		
 		if (!accountRepository.findById(sourceAccountNumber).isPresent()) {
 			throw new InvalidAccountException("Source");
 		}
 		
 		for (TransferRequest transferRequest: listTransfers) {
-			Transfer transfer = transferService.createTransfer(sourceAccountNumber,
+			Transfer transfer = transferService.createTransferForBatch(sourceAccountNumber,
 					transferRequest.getDestinationAccountNumber(),
 					transferRequest.getAmount(),
 					LocalDate.now(),
 					description);
 			transfer.setBatch_id(batch);
+			batch.addTransfer(transfer);
+			logger.log(formatTransfer(transfer));
 			transferRepository.save(transfer);
+			batchTransferRepository.save(batch);
 		}
 		
 		batch.setState(State.CLOSED.getNom());
+		logger.log("Batch completed\n==================================================================");
 		
-		return batchTransferRepository.save(batch);
+		batchTransferRepository.save(batch);
+	}
+	
+	/**
+	 * Compte le nombre de transferts par lot fait dans une journée.
+	 * 
+	 * @param date
+	 * 
+	 * @return int
+	 */
+	private int countBatchTransfers(LocalDate date) {
+		return batchTransferRepository.countBatchTransfers(date);
+	}
+	
+	/**
+	 * Génère la valeur de refLot pour un transfert par lot.
+	 * 
+	 * @return String
+	 */
+	public String generateRefLot() {
+		return LocalDate.now().toString() + "-" + (countBatchTransfers(LocalDate.now()) + 1);
+	}
+	
+	@Transactional
+	public BatchTransfer deleteBatchTransfer(long id) throws DeleteTransferException {
+		Optional<BatchTransfer> oBatch= batchTransferRepository.findById(id);
+		transferRepository.deleteById(id);
+		if (oBatch.isEmpty())
+			throw new DeleteTransferException(FailureTransfert.OBJECT_NOT_FOUND);
+		return oBatch.orElse(null);
+	}
+	
+	public String formatTransfer(Transfer transfer) {
+		String message = "Transfer from " + transfer.getSourceAccountNumber() + " to "
+				+ transfer.getDestinationAccountNumber() 
+				+ " | Amount: " + transfer.getAmount() 
+				+ " | Date: " + transfer.getTransferDate() 
+				+ " | State: " + transfer.getState();
+
+		if (transfer.getReason() != null) {
+			message += " | Reason: " + transfer.getReason();
+		}
+		
+		return message;
 	}
 
 }

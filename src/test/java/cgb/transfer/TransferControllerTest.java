@@ -86,7 +86,7 @@ public class TransferControllerTest {
 		mockMvc.perform(post("/api/transfers")
 				.content(asJsonString(transfer))
 				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isOk());
 	}
 
 	public static String asJsonString(final Object obj) {

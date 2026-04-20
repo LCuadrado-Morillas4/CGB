@@ -66,7 +66,7 @@ public class TransferServiceUnitTest {
 		when(transferRepository.save(Mockito.any(Transfer.class)))
 			.thenReturn(transfer);
 		
-		Transfer result = transferService.createTransfer("123456789", "987654321", 40.0, LocalDate.now(), "Test");
+		Transfer result = transferService.createTransferForBatch("123456789", "987654321", 40.0, LocalDate.now(), "Test");
 
 		assertEquals("123456789", result.getSourceAccountNumber());
 		assertEquals("987654321", result.getDestinationAccountNumber());

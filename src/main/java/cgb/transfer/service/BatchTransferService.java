@@ -119,4 +119,8 @@ public class BatchTransferService {
 		return message;
 	}
 
+	public BatchTransfer findBatchByRefLot(String refLot) {
+		return batchTransferRepository.findBatchByRefLot(refLot);
+	}
+
 }

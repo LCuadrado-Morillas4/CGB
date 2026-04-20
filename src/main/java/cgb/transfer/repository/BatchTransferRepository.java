@@ -15,6 +15,9 @@ import cgb.transfer.entity.BatchTransfer;
  */
 @Repository
 public interface BatchTransferRepository extends JpaRepository<BatchTransfer, Long> {
+
+	@Query("SELECT b FROM BatchTransfer b WHERE b.refLot = :refLot")
+	public BatchTransfer findBatchByRefLot(@Param("refLot") String refLot);
 	
 	/**
 	 * Renvoie le nombre de lots effectués sur une date précise

@@ -1,11 +1,15 @@
 package cgb.transfer.controller;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import cgb.transfer.dto.TransferRequest;
+import cgb.transfer.entity.BatchTransfer;
 import cgb.transfer.entity.Transfer;
 import cgb.transfer.service.TransferService;
 import cgb.transfer.exception.*;
@@ -70,7 +74,25 @@ public class TransferRestController {
 			TransferResponse errorResponse = new TransferResponse("FAILURE", e.getMessage());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 		}        
+	}
+	
+	@GetMapping("/failure/lot/{refLot}")
+	public ResponseEntity<?> getListTransferFromBatch(@PathVariable String refLot) {
+        List<Transfer> list = transferService.getFailedTransferByBatch(refLot);
+        return ResponseEntity.ok(list);
 	}  
+	
+	@GetMapping("/failure/dates")
+	public ResponseEntity<?> getListTransferFromDateInterval(@RequestParam LocalDate start, LocalDate end) {
+        List<Transfer> list = transferService.getFailedTransferByDateInterval(start, end);
+        return ResponseEntity.ok(list);
+	}  
+	
+	@GetMapping("/failure/destAccount/{destAccount}")
+	public ResponseEntity<?> getListTransferFromDestAccount(@PathVariable String destAccount) {
+        List<Transfer> list = transferService.getFailedTransferByDestAccount(destAccount);
+        return ResponseEntity.ok(list);
+	}
 
 	/*
     @PostMapping

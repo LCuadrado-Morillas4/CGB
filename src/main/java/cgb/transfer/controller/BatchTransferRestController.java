@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import cgb.transfer.dto.BatchTransferRequest;
 import cgb.transfer.entity.BatchTransfer;
+import cgb.transfer.entity.Transfer;
 import cgb.transfer.service.BatchTransferService;
+import cgb.transfer.service.TransferService;
 import cgb.transfer.exception.*;
 
 /**
@@ -27,6 +29,12 @@ public class BatchTransferRestController {
 	 * Lien au Service de gestion des transferts par lot.
 	 */
 	private BatchTransferService batchTransferService;
+
+	@Autowired
+	/**
+	 * Lien au Service de gestion des transferts.
+	 */
+	private TransferService transferService;
 
 	@PostMapping("/async")
 	/**
@@ -79,6 +87,15 @@ public class BatchTransferRestController {
 			TransferResponse errorResponse = new TransferResponse("FAILURE", e.getMessage());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 		} 
+	}
+
+	@GetMapping("/{refLot}")
+	public ResponseEntity<?> getTransfer(@PathVariable String refLot) {
+		BatchTransfer batch = batchTransferService.findBatchByRefLot(refLot);
+        List<Transfer> list = transferService.getTransferFromBatch(refLot);
+        batch.setListTransfers(list);
+
+        return ResponseEntity.ok(batch);
 	}
 
 }

@@ -3,6 +3,7 @@ package cgb.transfer.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cgb.transfer.dto.TransferRequest;
 import cgb.transfer.entity.Account;
 import cgb.transfer.entity.State;
 import cgb.transfer.entity.Transfer;
@@ -12,6 +13,7 @@ import cgb.transfer.repository.AccountRepository;
 import cgb.transfer.repository.TransferRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -106,7 +108,7 @@ public class TransferService {
 			transfer.setReason("Transfer amount can't be negative");
 			return transferRepository.save(transfer);
 		} else if (sourceAccount.get().getSolde().compareTo(amount) < 0) {
-			transfer.setState(State.CANCELLED.getNom());
+			transfer.setState(State.CANCELED.getNom());
 			transfer.setReason("Insufficient funds for source account");
 			return transferRepository.save(transfer);
 		} else {
@@ -147,4 +149,18 @@ public class TransferService {
 	public List<Transfer> getFailedTransferByDestAccount(String destAccountNumber) {
 		return transferRepository.findByDestAccountAndNotSuccess(destAccountNumber);
 	}
+	
+	public List<TransferRequest> findCancelledTransferFromBatch(String refLot) {
+		List<TransferRequest> trq = new ArrayList<TransferRequest>();
+		List<Transfer> list = transferRepository.findCancelledTransferFromBatch(refLot);
+		for (Transfer t: list) {
+			TransferRequest temp = new TransferRequest();
+			temp.setDestinationAccountNumber(t.getDestinationAccountNumber());
+			temp.setAmount(t.getAmount());
+			temp.setDescription(t.getDescription());
+			trq.add(temp);
+		}
+		return trq;
+	}
+	
 }

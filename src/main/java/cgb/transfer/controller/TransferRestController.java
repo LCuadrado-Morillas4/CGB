@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import cgb.transfer.dto.TransferRequest;
-import cgb.transfer.entity.BatchTransfer;
 import cgb.transfer.entity.Transfer;
 import cgb.transfer.service.TransferService;
 import cgb.transfer.exception.*;
@@ -92,6 +91,12 @@ public class TransferRestController {
 	public ResponseEntity<?> getListTransferFromDestAccount(@PathVariable String destAccount) {
         List<Transfer> list = transferService.getFailedTransferByDestAccount(destAccount);
         return ResponseEntity.ok(list);
+	}
+	
+	@GetMapping("/replay/{refLot}")
+	public ResponseEntity<?> getCancelledTransferFromBatch(@PathVariable String refLot) {
+		List<TransferRequest> list = transferService.findCancelledTransferFromBatch(refLot);
+		return ResponseEntity.ok(list);
 	}
 
 	/*

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import cgb.transfer.dto.BatchTransferRequest;
+import cgb.transfer.dto.TransferRequest;
 import cgb.transfer.entity.BatchTransfer;
 import cgb.transfer.entity.Transfer;
 import cgb.transfer.service.BatchTransferService;
@@ -88,14 +89,14 @@ public class BatchTransferRestController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 		} 
 	}
-
-	@GetMapping("/{refLot}")
-	public ResponseEntity<?> getTransfer(@PathVariable String refLot) {
-		BatchTransfer batch = batchTransferService.findBatchByRefLot(refLot);
-        List<Transfer> list = transferService.getTransferFromBatch(refLot);
-        batch.setListTransfers(list);
-
-        return ResponseEntity.ok(batch);
+	
+	@GetMapping("/replay/{refLot}")
+	public ResponseEntity<?> replayBatch(@PathVariable String refLot) {
+		BatchTransferRequest batch = batchTransferService.findBatchByRefLotReplay(refLot);
+		List<TransferRequest> list = transferService.findCancelledTransferFromBatch(refLot);
+		batch.setListTransfer(list);
+		
+		return ResponseEntity.ok(batch);
 	}
 
 }

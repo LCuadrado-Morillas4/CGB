@@ -23,10 +23,13 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
 	@Query("Select t FROM Transfer t JOIN BatchTransfer b ON t.batch_id = b WHERE b.refLot = :refLot AND t.state != 'success'")
 	public List<Transfer> findByRefLotAndNotSuccess(@Param("refLot") String refLot);
 	
-	@Query("Select t FROM Transfer t WHERE t.transferDate BETWEEN :start AND :end AND t.state != 'success'")
+	@Query("SELECT t FROM Transfer t WHERE t.transferDate BETWEEN :start AND :end AND t.state != 'success'")
 	public List<Transfer> findByDateIntervalAndNotSuccess(@Param("start") LocalDate start, @Param("end") LocalDate end);
 	
-	@Query("Select t FROM Transfer t WHERE t.destinationAccountNumber = :destinationAccountNumber AND t.state != 'success'")
+	@Query("SELECT t FROM Transfer t WHERE t.destinationAccountNumber = :destinationAccountNumber AND t.state != 'success'")
 	public List<Transfer> findByDestAccountAndNotSuccess(@Param("destinationAccountNumber") String destinationAccountNumber);
+	
+	@Query("SELECT t FROM Transfer t JOIN BatchTransfer b ON t.batch_id = b WHERE b.refLot = :refLot AND t.state = 'canceled'")
+	public List<Transfer> findCancelledTransferFromBatch(@Param("refLot") String refLot);
 	
 }

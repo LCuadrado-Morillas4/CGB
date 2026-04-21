@@ -2,9 +2,12 @@ package cgb.transfer.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * La classe de DTO d'un transfert.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BatchTransferRequest {
 	
 	/**

@@ -136,7 +136,7 @@ public class TransferService {
 			transfer.setReason("Transfer amount can't be negative");
 			return transferRepository.save(transfer);
 		} else if (sourceAccount.get().getSolde().compareTo(amount) < 0) {
-			transfer.setState(State.CANCELED.getNom());
+			transfer.setState(State.CANCELLED.getNom());
 			transfer.setReason("Insufficient funds for source account");
 			return transferRepository.save(transfer);
 		} else {

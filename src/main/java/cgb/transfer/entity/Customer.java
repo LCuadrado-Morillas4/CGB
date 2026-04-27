@@ -97,4 +97,16 @@ public class Customer {
 		this.listAccounts = listAccounts;
 	}
 	
+	public void addUser(UserCGB user) {
+		this.listUsers.add(user);
+	}
+	
+	public void addAccount(Account account) {
+		this.listAccounts.add(account);
+	}
+	
+	public void add(Account account) {
+		this.list.add(account);
+	}
+	
 }

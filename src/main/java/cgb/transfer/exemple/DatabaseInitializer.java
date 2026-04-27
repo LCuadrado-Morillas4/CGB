@@ -85,4 +85,5 @@ public class DatabaseInitializer {
         account8.setSolde(1300.00);
         accountRepository.save(account8);
     }
+
 }

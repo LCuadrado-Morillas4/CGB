@@ -55,6 +55,10 @@ public class Account {
     public Customer getCompany() {
     	return company;
     }
+    
+    public List<Customer> getRecipientAccounts() {
+    	return recipientAccounts;
+    }
 	
 	public void setSolde(Double solde) {
 		this.solde = solde;
@@ -66,6 +70,14 @@ public class Account {
 	
 	public void setCompany(Customer company) {
 		this.company = company;
+	}
+	
+	public void setRecipientAccounts(List<Customer> recipientAcounts) {
+		this.recipientAccounts = recipientAcounts;
+	}
+	
+	public void addRecipientAccount(Customer recipientAccount) {
+		this.recipientAccounts.add(recipientAccount);
 	}
 	
 }

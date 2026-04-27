@@ -3,7 +3,7 @@ package cgb.transfer.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import cgb.transfer.entity.Account;
+import cgb.transfer.entity.Role;
 
 /**
  * Classe représentant la table des comptes dans la DB.
@@ -11,6 +11,6 @@ import cgb.transfer.entity.Account;
  * (il manque l'annotation de Repository)
  */
 @Repository
-public interface AccountRepository extends JpaRepository<Account, String> {
+public interface RoleRepository extends JpaRepository<Role, String> {
 }
 

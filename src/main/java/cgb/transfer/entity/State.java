@@ -17,13 +17,7 @@ public enum State {
 	 * État de succès : l'opération s'est terminée correctement
 	 */
 	SUCCESS("success"),
-	/**
-	 * État annulé : l'opération a été interrompue volontairement
-	 */
-	CANCELLED("canceled"),
-	/**
-	 * État reçu : l'oparation a été reçue par le système destinataire
-	 */
+	CANCELED("canceled"),
 	RECEIVED("received"),
 	/**
 	 * État fermé : l'opération est définitivement terminée

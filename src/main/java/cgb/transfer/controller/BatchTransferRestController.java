@@ -97,6 +97,21 @@ public class BatchTransferRestController {
 		batch.setListTransfer(list);
 		
 		return ResponseEntity.ok(batch);
+
+	/**
+	 * Fonction d'accès au transfert par lot à partir de la référence
+	 * 
+	 * @param refLot Numéro unique du transfert par lot
+	 * 
+	 * @return Transfert par lot
+	 */
+	@GetMapping("/{refLot}")
+	public ResponseEntity<?> getTransfer(@PathVariable String refLot) {
+		BatchTransfer batch = batchTransferService.findBatchByRefLot(refLot);
+        List<Transfer> list = transferService.getTransferFromBatch(refLot);
+        batch.setListTransfers(list);
+
+        return ResponseEntity.ok(batch);
 	}
 
 }

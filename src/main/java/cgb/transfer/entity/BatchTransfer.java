@@ -44,7 +44,10 @@ public class BatchTransfer {
 	 * État du transfert
 	 */
 	private String state;
-	
+
+	/**
+	 * Liste des transferts
+	 */
 	@OneToMany(mappedBy = "batch_id", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference
 	private List<Transfer> listTransfers = new ArrayList<Transfer>();;

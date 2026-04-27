@@ -74,19 +74,41 @@ public class TransferRestController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 		}        
 	}
-	
+
+	/**
+	 * Fonction d'accès au(x) transfert(s) en échec à partir de la référence du lot 
+	 * 
+	 * @param refLot Numéro unique du transfert par lot
+	 * 
+	 * @return Liste de transferts en échec
+	 */
 	@GetMapping("/failure/lot/{refLot}")
 	public ResponseEntity<?> getListTransferFromBatch(@PathVariable String refLot) {
         List<Transfer> list = transferService.getFailedTransferByBatch(refLot);
         return ResponseEntity.ok(list);
-	}  
-	
+	}
+
+	/**
+	 * Fonction d'accès au(x) transfert(s) en échec par lot contenu(s) dans un intervalle de dates
+	 * 
+	 * @param start Date de début de l'intervalle
+	 * @param end   Date de fin de l'intervalle
+	 * 
+	 * @return Liste de transferts en échec
+	 */	
 	@GetMapping("/failure/dates")
 	public ResponseEntity<?> getListTransferFromDateInterval(@RequestParam LocalDate start, LocalDate end) {
         List<Transfer> list = transferService.getFailedTransferByDateInterval(start, end);
         return ResponseEntity.ok(list);
-	}  
-	
+	}
+
+	/**
+	 * Fonction d'accès au(x) transfert(s) en échec par lot à partir de l'IBAN du compte destinataire
+	 * 
+	 * @param destAccount IBAN du compte destinataire
+	 * 
+	 * @return Liste de transferts en échec
+	 */	
 	@GetMapping("/failure/destAccount/{destAccount}")
 	public ResponseEntity<?> getListTransferFromDestAccount(@PathVariable String destAccount) {
         List<Transfer> list = transferService.getFailedTransferByDestAccount(destAccount);

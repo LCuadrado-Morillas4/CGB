@@ -10,8 +10,7 @@ import org.springframework.stereotype.Repository;
 import cgb.transfer.entity.BatchTransfer;
 
 /**
- * Classe représentant la table des tranferts dans la DB.
- * Possiblité de rajouter des requêtes comme vu en cours.
+ * Classe représentant la table des tranferts par lot dans la BDD.
  */
 @Repository
 public interface BatchTransferRepository extends JpaRepository<BatchTransfer, Long> {

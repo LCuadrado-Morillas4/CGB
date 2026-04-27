@@ -44,6 +44,19 @@ public class BatchTransferService {
 	
 	private Logger logger = Logger.getInstance();
 	
+	/**
+	 * Crée un lot de virements à partir des informations données
+	 * 
+	 * @param sourceAccountNumber IBAN du compte source
+	 * @param description         Description du lot
+	 * @param listTransfers		  Liste des transferts du lot
+	 * 
+	 * @throws InvalidAccountException
+	 * @throws NegativeTransferAmountException
+	 * @throws DateTransferException
+	 * @throws InsufficientFundsException
+	 * @throws IOException
+	 */
 	@Async
 	@Transactional
 	public void createBatchTransfer(String sourceAccountNumber, String description, List<TransferRequest> listTransfers) throws InvalidAccountException, NegativeTransferAmountException, DateTransferException, InsufficientFundsException, IOException {
@@ -116,6 +129,15 @@ public class BatchTransferService {
 		return LocalDate.now().toString() + "-" + (countBatchTransfers(LocalDate.now()) + 1);
 	}
 	
+	/**
+	 * Supprime un lot de virements précis
+	 * 
+	 * @param id Identifiant du lot à supprimer
+	 * 
+	 * @return Le lot supprimé
+	 * 
+	 * @throws DeleteTransferException
+	 */
 	@Transactional
 	public BatchTransfer deleteBatchTransfer(long id) throws DeleteTransferException {
 		Optional<BatchTransfer> oBatch= batchTransferRepository.findById(id);
@@ -125,6 +147,13 @@ public class BatchTransferService {
 		return oBatch.orElse(null);
 	}
 	
+	/**
+	 * Formate en texte les informations du transfert pour écrire des logs
+	 * 
+	 * @param transfer Transfert à formater
+	 * 
+	 * @return Texte formaté des informations du transfert
+	 */
 	public String formatTransfer(Transfer transfer) {
 		String message = "Transfer from " + transfer.getSourceAccountNumber() + " to "
 				+ transfer.getDestinationAccountNumber() 
@@ -139,6 +168,13 @@ public class BatchTransferService {
 		return message;
 	}
 
+	/**
+	 * Renvoie un lot de virements à partir de sa référence unique
+	 * 
+	 * @param refLot Numéro unique du lot
+	 * 
+	 * @return BatchTransfer
+	 */
 	public BatchTransfer findBatchByRefLot(String refLot) {
 		return batchTransferRepository.findBatchByRefLot(refLot);
 	}

@@ -27,6 +27,22 @@ public class TransferService {
 	@Autowired
 	private TransferRepository transferRepository;
 
+	/**
+	 * Crée un transfert à partir des informations données
+	 * 
+	 * @param sourceAccountNumber       IBAN du compte source
+	 * @param destinationAccountNumber  IBAN du compte destinataire
+	 * @param amount					Montant du transfert
+	 * @param transferDate				Date du transfert
+	 * @param description				Description du transfert
+	 * 
+	 * @return Le transfert créé
+	 * 
+	 * @throws DateTransferException
+	 * @throws NegativeTransferAmountException
+	 * @throws InvalidAccountException
+	 * @throws InsufficientFundsException
+	 */
 	@Transactional
 	public Transfer createTransfer(String sourceAccountNumber, String destinationAccountNumber, Double amount,
 			LocalDate transferDate, String description) throws DateTransferException, NegativeTransferAmountException,
@@ -68,6 +84,18 @@ public class TransferService {
 
 	}
 
+	/**
+	 * Crée un transfert à partir des informations données.
+	 * Différenciation d'un transfsert classique étant donné que les transfert venant d'un lot possède l'attribut d'état pour la traçabilité.
+	 * 
+	 * @param sourceAccountNumber       IBAN du compte source
+	 * @param destinationAccountNumber  IBAN du compte destinataire
+	 * @param amount					Montant du transfert
+	 * @param transferDate				Date du transfert
+	 * @param description				Description du transfert
+	 * 
+	 * @return Le transfert créé
+	 */
 	@Transactional
 	public Transfer createTransferForBatch(String sourceAccountNumber, String destinationAccountNumber, Double amount,
 			LocalDate transferDate, String description){
@@ -123,6 +151,15 @@ public class TransferService {
 		}
 	}
 
+	/**
+	 * Supprime le transfert à l'aide de son identifiant
+	 * 
+	 * @param id Identifiant du transfert
+	 * 
+	 * @return Transfert supprimé
+	 * 
+	 * @throws DeleteTransferException
+	 */
 	@Transactional
 	public Transfer deleteTransfer(Long id) throws DeleteTransferException {
 		Optional<Transfer> otranfer = transferRepository.findById(id);
@@ -132,18 +169,47 @@ public class TransferService {
 		return otranfer.orElse(null);
 	}
 
+	/**
+	 * Renvoie les transferts d'un lot précis
+	 * 
+	 * @param refLot Numéro unique du lot 
+	 * 
+	 * @return Liste des transferts
+	 */
 	public List<Transfer> getTransferFromBatch(String refLot) {
 		return transferRepository.findTransferByBatch(refLot);
 	}
-	
+
+	/**
+	 * Renvoie les transferts en échec d'un lot précis
+	 * 
+	 * @param refLot Numéro unique du lot 
+	 * 
+	 * @return Liste des transferts
+	 */
 	public List<Transfer> getFailedTransferByBatch(String refLot) {
 		return transferRepository.findByRefLotAndNotSuccess(refLot);
 	}
-	
+
+	/**
+	 * Renvoie les transferts en échec sur une intervalle de dates
+	 * 
+	 * @param start Date de début de l'intervalle
+	 * @param end   Date de fin de l'intervalle
+	 * 
+	 * @return Liste des transferts
+	 */
 	public List<Transfer> getFailedTransferByDateInterval(LocalDate start, LocalDate end) {
 		return transferRepository.findByDateIntervalAndNotSuccess(start, end);
 	}
-	
+
+	/**
+	 * Renvoie les transferts en échec pour un compte destinataire
+	 * 
+	 * @param destAccountNumber IBAN du compte destinataire
+	 * 
+	 * @return Liste des transferts
+	 */
 	public List<Transfer> getFailedTransferByDestAccount(String destAccountNumber) {
 		return transferRepository.findByDestAccountAndNotSuccess(destAccountNumber);
 	}

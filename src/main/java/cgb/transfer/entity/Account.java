@@ -33,8 +33,7 @@ public class Account {
 	/**
 	 * Liste des comptes bénéficiaires
 	 */
-	//TODO METTRE LA RÉFÉRENCE À L'OBJET CUSTOMER
-	@ManyToMany
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinTable(
 			name = "recipient_accounts",
 			joinColumns = @JoinColumn(name = "accountNumber"),

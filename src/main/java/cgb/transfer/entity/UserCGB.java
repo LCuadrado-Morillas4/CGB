@@ -9,6 +9,7 @@ public class UserCGB {
 	 * Identifiant de l'utilisateur
 	 */
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	/**
@@ -29,14 +30,13 @@ public class UserCGB {
 	/**
 	 * Rôle de l'utilisateur
 	 */
-	@ManyToOne
-	@JoinColumn(name = "role_id")
+	@Enumerated(EnumType.STRING)
 	private Role role;
 	
 	/**
 	 * Entreprise de l'utilisateur
 	 */
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "customer_id")
 	private Customer company;
 	

@@ -3,6 +3,8 @@ package cgb.transfer.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +14,7 @@ public class Customer {
 	 * Identifiant de client
 	 */
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	/**
@@ -45,8 +48,8 @@ public class Customer {
 	/**
 	 * 
 	 */
-	@ManyToMany(mappedBy = "recipientAccounts")
-	// TODO DONNER UN NOM
+	@ManyToMany(mappedBy = "recipientAccounts", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JsonBackReference
 	private List<Account> list = new ArrayList<Account>();
 	
 	public Long getId() {

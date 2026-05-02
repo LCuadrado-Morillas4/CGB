@@ -97,7 +97,8 @@ public class BatchTransferRestController {
 		batch.setListTransfer(list);
 		
 		return ResponseEntity.ok(batch);
-
+	}
+	
 	/**
 	 * Fonction d'accès au transfert par lot à partir de la référence
 	 * 

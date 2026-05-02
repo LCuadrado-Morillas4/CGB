@@ -1,5 +1,8 @@
 package cgb.transfer.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 
 
@@ -19,6 +22,24 @@ public class Account {
      * Le solde du compte.
      */
 	private Double solde;
+	
+	/**
+	 * Entreprise détenant le compte
+	 */
+	@ManyToOne
+	@JoinColumn(name = "customer_id")
+	private Customer company;
+	
+	/**
+	 * Liste des comptes bénéficiaires
+	 */
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(
+			name = "recipient_accounts",
+			joinColumns = @JoinColumn(name = "accountNumber"),
+			inverseJoinColumns = @JoinColumn(name = "customer_id")
+			)
+	private List<Customer> recipientAccounts = new ArrayList<Customer>();
 
     // Getters and Setters obtenus grace à Data
 	
@@ -26,16 +47,36 @@ public class Account {
 		return solde;
 	}
 	
-	public void setSolde(Double solde) {
-		this.solde = solde;
-	}
-	
     public String getAccountNumber() {
 		return accountNumber;
 	}
     
+    public Customer getCompany() {
+    	return company;
+    }
+    
+    public List<Customer> getRecipientAccounts() {
+    	return recipientAccounts;
+    }
+	
+	public void setSolde(Double solde) {
+		this.solde = solde;
+	}
+    
 	public void setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
+	}
+	
+	public void setCompany(Customer company) {
+		this.company = company;
+	}
+	
+	public void setRecipientAccounts(List<Customer> recipientAcounts) {
+		this.recipientAccounts = recipientAcounts;
+	}
+	
+	public void addRecipientAccount(Customer recipientAccount) {
+		this.recipientAccounts.add(recipientAccount);
 	}
 	
 }

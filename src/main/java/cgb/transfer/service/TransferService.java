@@ -7,6 +7,7 @@ import cgb.transfer.dto.TransferRequest;
 import cgb.transfer.entity.Account;
 import cgb.transfer.entity.State;
 import cgb.transfer.entity.Transfer;
+import cgb.transfer.entity.Customer;
 import cgb.transfer.exception.*;
 import cgb.transfer.exception.DeleteTransferException.FailureTransfert;
 import cgb.transfer.repository.AccountRepository;
@@ -44,11 +45,12 @@ public class TransferService {
 	 * @throws NegativeTransferAmountException
 	 * @throws InvalidAccountException
 	 * @throws InsufficientFundsException
+	 * @throws RecipientAccountException 
 	 */
 	@Transactional
 	public Transfer createTransfer(String sourceAccountNumber, String destinationAccountNumber, Double amount,
 			LocalDate transferDate, String description) throws DateTransferException, NegativeTransferAmountException,
-			InvalidAccountException, InsufficientFundsException {
+			InvalidAccountException, InsufficientFundsException, RecipientAccountException {
 
 		Transfer transfer = new Transfer();
 		transfer.setSourceAccountNumber(sourceAccountNumber);
@@ -68,7 +70,9 @@ public class TransferService {
 			throw new InvalidAccountException("Destination");
 		}
 
-		if (transferDate.isBefore(LocalDate.now())) {
+		if (!ableToTransfer(sourceAccountNumber, destinationAccountNumber)) {
+			throw new RecipientAccountException(sourceAccountNumber, destinationAccountNumber);
+		} else if (transferDate.isBefore(LocalDate.now())) {
 			throw new DateTransferException();
 		} else if (amount <= 0) {
 			throw new NegativeTransferAmountException();
@@ -126,8 +130,12 @@ public class TransferService {
 			transfer.setReason("Destination account doesn't exist");
 			return transferRepository.save(transfer);
 		}
-
-		if (transferDate.isBefore(LocalDate.now())) {
+		
+		if (!ableToTransfer(sourceAccountNumber, destinationAccountNumber)) {
+			transfer.setState(State.FAILURE.getNom());
+			transfer.setReason("Account " + destinationAccountNumber + " is not a registered beneficiary of account " + sourceAccountNumber);
+			return transferRepository.save(transfer);
+		} else if (transferDate.isBefore(LocalDate.now())) {
 			transfer.setState(State.FAILURE.getNom());
 			transfer.setReason("Transfer date is prior to today");
 			return transferRepository.save(transfer);
@@ -136,7 +144,7 @@ public class TransferService {
 			transfer.setReason("Transfer amount can't be negative");
 			return transferRepository.save(transfer);
 		} else if (sourceAccount.get().getSolde().compareTo(amount) < 0) {
-			transfer.setState(State.CANCELED.getNom());
+			transfer.setState(State.CANCELLED.getNom());
 			transfer.setReason("Insufficient funds for source account");
 			return transferRepository.save(transfer);
 		} else {
@@ -227,6 +235,25 @@ public class TransferService {
 			trq.add(temp);
 		}
 		return trq;
+	}
+	
+	public boolean ableToTransfer(String srcAccNumber, String destAccNumber) {
+		Account sourceAccount = accountRepository.findById(srcAccNumber).orElse(null);
+		Account destinationAccount = accountRepository.findById(destAccNumber).orElse(null);
+		
+		if (sourceAccount == null || destinationAccount == null) {
+			return false;
+		}
+		
+		Long destinationCustomerId = destinationAccount.getCompany().getId();
+		
+		for (Customer beneficiary : sourceAccount.getRecipientAccounts()) {
+			if (beneficiary.getId().equals(destinationCustomerId)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 }

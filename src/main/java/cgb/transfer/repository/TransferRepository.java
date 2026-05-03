@@ -50,13 +50,20 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
 	/**
 	 * Renvoie la liste de transferts en échec liée au compte destinataire
 	 * 
-	 * @param destinationAccontNumber IBAN du compte destinataire
+	 * @param destinationAccountNumber IBAN du compte destinataire
 	 * 
 	 * @return Liste des transferts
 	 */
 	@Query("Select t FROM Transfer t WHERE t.destinationAccountNumber = :destinationAccountNumber AND t.state != 'success'")
 	public List<Transfer> findByDestAccountAndNotSuccess(@Param("destinationAccountNumber") String destinationAccountNumber);
 	
+	/**
+	 * Renvoie les transferts annulés pour un lot 
+	 * 
+	 * @param refLot L'identifiant unique du transfert par lot
+	 * 
+	 * @return Liste des transferts
+	 */
 	@Query("SELECT t FROM Transfer t JOIN BatchTransfer b ON t.batch_id = b WHERE b.refLot = :refLot AND t.state = 'canceled'")
 	public List<Transfer> findCancelledTransferFromBatch(@Param("refLot") String refLot);
 	

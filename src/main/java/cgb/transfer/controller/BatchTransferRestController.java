@@ -39,7 +39,7 @@ public class BatchTransferRestController {
 
 	@PostMapping("/async")
 	/**
-	 * Fonction de gestion de la création d'un transfert par lot.
+	 * Fonction de la création d'un transfert par lot.
 	 * 
 	 * @param transferRequest L'objet JSON envoyé dans le corps de la requête POST
 	 * @return L'objet JSON correspondant au transfer s'il est valide. Une réponse
@@ -90,6 +90,13 @@ public class BatchTransferRestController {
 		} 
 	}
 	
+	/**
+	 * Fonction de rejeu des transferts annulés d'un lot
+	 * 
+	 * @param refLot La référence unique du transfert par lot à rejouer, 
+	 * 			     renseigné dans le corps de la requête.
+	 * @return Transfer par lot 
+	 */
 	@GetMapping("/replay/{refLot}")
 	public ResponseEntity<?> replayBatch(@PathVariable String refLot) {
 		BatchTransferRequest batch = batchTransferService.findBatchByRefLotReplay(refLot);

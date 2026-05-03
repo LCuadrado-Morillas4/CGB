@@ -115,6 +115,13 @@ public class TransferRestController {
         return ResponseEntity.ok(list);
 	}
 	
+	/**
+	 * Fonction d'accès aux transferts annulés d'un lot
+	 * 
+	 * @param refLot La référence unique du transfert par lot à rejouer, 
+	 * 			     renseigné dans le corps de la requête.
+	 * @return La liste des transferts
+	 */
 	@GetMapping("/replay/{refLot}")
 	public ResponseEntity<?> getCancelledTransferFromBatch(@PathVariable String refLot) {
 		List<TransferRequest> list = transferService.findCancelledTransferFromBatch(refLot);

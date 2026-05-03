@@ -15,6 +15,13 @@ import cgb.transfer.entity.BatchTransfer;
 @Repository
 public interface BatchTransferRepository extends JpaRepository<BatchTransfer, Long> {
 
+	/**
+	 * Renvoie un transfert par lot avec sa référence unique 
+	 * 
+	 * @param refLot L'identifiant unique du transfert par lot
+	 *
+	 * @return Le lot
+	 */
 	@Query("SELECT b FROM BatchTransfer b WHERE b.refLot = :refLot")
 	public BatchTransfer findBatchByRefLot(@Param("refLot") String refLot);
 	

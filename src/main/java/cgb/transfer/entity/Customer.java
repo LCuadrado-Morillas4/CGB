@@ -46,7 +46,7 @@ public class Customer {
 	private List<Account> listAccounts = new ArrayList<Account>();
 	
 	/**
-	 * 
+	 * Liste des comptes bénéficiaires
 	 */
 	@ManyToMany(mappedBy = "recipientAccounts", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JsonBackReference

@@ -224,6 +224,13 @@ public class TransferService {
 		return transferRepository.findByDestAccountAndNotSuccess(destAccountNumber);
 	}
 	
+	/**
+	 * Fonction d'accès aux transferts annulés pour un lot
+	 * 
+	 * @param refLot L'identifiant unique du transfert par lot
+	 *
+	 * @return La liste des transferts
+	 */
 	public List<TransferRequest> findCancelledTransferFromBatch(String refLot) {
 		List<TransferRequest> trq = new ArrayList<TransferRequest>();
 		List<Transfer> list = transferRepository.findCancelledTransferFromBatch(refLot);
@@ -237,6 +244,14 @@ public class TransferService {
 		return trq;
 	}
 	
+	/**
+	 * Fonction qui vérifie que le compte destinataire est bénéficiaire du compte source
+	 * 
+	 * @param srcAccNumber  IBAN du compte source
+	 * @param destAccNumber IBAN du compte destinataire
+	 * 
+	 * @return boolean
+	 */
 	public boolean ableToTransfer(String srcAccNumber, String destAccNumber) {
 		Account sourceAccount = accountRepository.findById(srcAccNumber).orElse(null);
 		Account destinationAccount = accountRepository.findById(destAccNumber).orElse(null);

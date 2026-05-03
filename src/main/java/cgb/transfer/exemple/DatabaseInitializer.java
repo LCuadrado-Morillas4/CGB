@@ -51,7 +51,9 @@ public class DatabaseInitializer {
 	/**
 	 * Fonction de valorisation de la base appellée si cette dernière est vide.
 	 * 
-	 * @param accountRepository L'instance de Repository actuellement utilisée.
+	 * @param accountRepository  L'instance de Repository actuellement utilisée.
+	 * @param customerRepository L'instance de Repository actuellement utilisée.
+	 * @param userRepository     L'instance de Repository actuellement utilisée.
 	 */
 	public static void insertSampleData(AccountRepository accountRepository, CustomerRepository customerRepository, UserCGBRepository userRepository) {
 

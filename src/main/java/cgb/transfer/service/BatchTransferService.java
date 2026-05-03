@@ -186,6 +186,13 @@ public class BatchTransferService {
 		return batchTransferRepository.findBatchByRefLot(refLot);
 	}
 	
+	/**
+	 * Fonction permettant de créer un nouveau transfert par lot pour le rejeu de transferts annulés
+	 * 
+	 * @param refLot L'identifiant unique du transfert par lot
+	 * 
+	 * @return Transfert par lot
+	 */
 	public BatchTransferRequest findBatchByRefLotReplay(String refLot) {
 		BatchTransferRequest b = new BatchTransferRequest();
 		b.setDescription("REJEU - " + batchTransferRepository.findBatchByRefLot(refLot).getDescription());

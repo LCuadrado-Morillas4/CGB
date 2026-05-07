@@ -11,8 +11,6 @@ public class Logger {
 	private FileWriter fileWriter;
 	private PrintWriter printWriter;
 	
-	private static final String LOGS = "logs.txt";
-	
 	private Logger() {
 		
 	}
@@ -24,9 +22,9 @@ public class Logger {
 		return instance;
 	}
 	
-	public void log(String content) throws IOException{
+	public void log(String file, String content) throws IOException{
 		try {
-			fileWriter = new FileWriter(LOGS, true);
+			fileWriter = new FileWriter(file, true);
 			printWriter = new PrintWriter(fileWriter);
 			
 			printWriter.println(content);

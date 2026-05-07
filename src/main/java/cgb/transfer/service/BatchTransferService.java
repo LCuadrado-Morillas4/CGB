@@ -74,7 +74,7 @@ public class BatchTransferService {
 		batch.setDate(LocalDate.now());
 		batch.setState(State.RECEIVED.getNom());
 		batchTransferRepository.save(batch);
-		logger.log("Batch ref: " + batch.getRefLot() + " | Creating batch succeeded");
+		logger.log("logs.txt", "Batch ref: " + batch.getRefLot() + " | Creating batch succeeded");
 		
 		if (!accountRepository.findById(sourceAccountNumber).isPresent()) {
 			throw new InvalidAccountException("Source");
@@ -92,7 +92,7 @@ public class BatchTransferService {
 			
 			transfer.setBatch_id(batch);
 			batch.addTransfer(transfer);
-			logger.log(formatTransfer(transfer));
+			logger.log("logs.txt", formatTransfer(transfer));
 			transferRepository.save(transfer);
 			batchTransferRepository.save(batch);
 			
@@ -104,13 +104,13 @@ public class BatchTransferService {
 		}
 		
 		batch.setState(State.CLOSED.getNom());
-		logger.log("Batch completed\n==================================================================");
+		logger.log("logs.txt", "Batch completed\n==================================================================");
 		
 		try {
             mail.sendBatchReport("comptable@gsb.fr", batch.getRefLot(), batch.getDate(), successCount, failureCount);
-            logger.log("Batch reference: " + batch.getRefLot() + " | Notification email sent successfully");
+            logger.log("logs.txt", "Batch reference: " + batch.getRefLot() + " | Notification email sent successfully");
         } catch (Exception e) {
-            logger.log("WARNING: Notification email failed for batch " + batch.getRefLot() + ". Error: " + e.getMessage());
+            logger.log("logs.txt", "WARNING: Notification email failed for batch " + batch.getRefLot() + ". Error: " + e.getMessage());
         }
 		
 		batchTransferRepository.save(batch);
